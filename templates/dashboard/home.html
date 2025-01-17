@@ -1,6 +1,7 @@
 {% extends 'dashboard/base.html' %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <section class="is-hero-bar">
   <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
@@ -21,7 +22,7 @@
               Última Lectura
             </h3>
             <h1>
-              18:22
+              {{last_timestamp}}
             </h1>
           </div>
           <span class="icon widget-icon text-green-500"><i class="mdi mdi-account-multiple mdi-48px"></i></span>
@@ -36,7 +37,7 @@
               Temperatura
             </h3>
             <h1>
-              23 °C
+              {{last_avg_temperature|floatformat:2}} °C
             </h1>
           </div>
           <span class="icon widget-icon text-blue-500"><i class="mdi mdi-cart-outline mdi-48px"></i></span>
@@ -52,7 +53,7 @@
               Humedad
             </h3>
             <h1>
-              97%
+              {{last_avg_humidity|floatformat:2}} %
             </h1>
           </div>
           <span class="icon widget-icon text-red-500"><i class="mdi mdi-finance mdi-48px"></i></span>
@@ -68,25 +69,9 @@
         <span class="icon"><i class="mdi mdi-finance"></i></span>
         Temperatura - 24 h
       </p>
-      <a href="#" class="card-header-icon">
-        <span class="icon"><i class="mdi mdi-reload"></i></span>
-      </a>
     </header>
     <div class="card-content">
-      <div class="chart-area">
-        <div class="h-full">
-          <div class="chartjs-size-monitor">
-            <div class="chartjs-size-monitor-expand">
-              <div></div>
-            </div>
-            <div class="chartjs-size-monitor-shrink">
-              <div></div>
-            </div>
-          </div>
-          <canvas id="big-line-chart" width="2992" height="1000" class="chartjs-render-monitor block"
-            style="height: 400px; width: 1197px;"></canvas>
-        </div>
-      </div>
+      <canvas id="temperature-chart" width="400" height="200"></canvas>
     </div>
   </div>
 
@@ -97,27 +82,108 @@
         <span class="icon"><i class="mdi mdi-finance"></i></span>
         Humedad - 24 h
       </p>
-      <a href="#" class="card-header-icon">
-        <span class="icon"><i class="mdi mdi-reload"></i></span>
-      </a>
     </header>
     <div class="card-content">
-      <div class="chart-area">
-        <div class="h-full">
-          <div class="chartjs-size-monitor">
-            <div class="chartjs-size-monitor-expand">
-              <div></div>
-            </div>
-            <div class="chartjs-size-monitor-shrink">
-              <div></div>
-            </div>
-          </div>
-          <canvas id="big-line-chart" width="2992" height="1000" class="chartjs-render-monitor block"
-            style="height: 400px; width: 1197px;"></canvas>
-        </div>
-      </div>
+      <canvas id="humidity-chart" width="400" height="200"></canvas>
     </div>
   </div>
 
 </section>
+
+<script>
+  // Obtener datos de Django
+  const timestamps = {{ timestamps|safe }};
+  const humidity1 = {{ humidity1|safe }};
+  const humidity2 = {{ humidity2|safe }};
+  const humidity3 = {{ humidity3|safe }};
+  const avgHumidity = {{ avg_humidity|safe }};
+  const temperature1 = {{ temperature1|safe }};
+  const temperature2 = {{ temperature2|safe }};
+  const temperature3 = {{ temperature3|safe }};
+  const avgTemperature = {{ avg_temperature|safe }};
+
+  // Grafica de Temperatura
+  new Chart(document.getElementById('temperature-chart'), {
+    type: 'line',
+    data: {
+      labels: timestamps,
+      datasets: [
+        {
+          label: 'Sensor 1',
+          data: temperature1,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 2',
+          data: temperature2,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 3',
+          data: temperature3,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false,
+        },
+        {
+          label: 'Promedio',
+          data: avgTemperature,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderDash: [5, 5],
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Hora' } },
+        y: { title: { display: true, text: 'Temperatura (°C)' } },
+      },
+    },
+  });
+
+  // Grafica de Humedad
+  new Chart(document.getElementById('humidity-chart'), {
+    type: 'line',
+    data: {
+      labels: timestamps,
+      datasets: [
+        {
+          label: 'Sensor 1',
+          data: humidity1,
+          borderColor: 'rgba(255, 206, 86, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 2',
+          data: humidity2,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 3',
+          data: humidity3,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          fill: false,
+        },
+        {
+          label: 'Promedio',
+          data: avgHumidity,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderDash: [5, 5],
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Hora' } },
+        y: { title: { display: true, text: 'Humedad (%)' } },
+      },
+    },
+  });
+</script>
 {% endblock %}
