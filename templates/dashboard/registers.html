@@ -1,0 +1,356 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<section class="is-hero-bar">
+  <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+    <h1 class="title">
+      Registros
+    </h1>
+  </div>
+</section>
+
+<section class="section main-section">
+
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">
+        <span class="icon"><i class="mdi mdi-ballot-outline"></i></span>
+        Campos Visibles
+      </p>
+    </header>
+    <div class="card-content">
+      <div class="field">
+        <div class="field-body">
+          <div class="field grouped multiline">
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="T1">
+                <span class="check"></span>
+                <span class="control-label">Temperatura 1</span>
+              </label>
+            </div>
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="T2">
+                <span class="check"></span>
+                <span class="control-label">Temperatura 2</span>
+              </label>
+            </div>
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="T3">
+                <span class="check"></span>
+                <span class="control-label">Temperatura 3</span>
+              </label>
+            </div>
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="TP">
+                <span class="check"></span>
+                <span class="control-label">Temperatura Promedio</span>
+              </label>
+            </div>
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="H1">
+                <span class="check"></span>
+                <span class="control-label">Humedad 1</span>
+              </label>
+            </div>
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="H2">
+                <span class="check"></span>
+                <span class="control-label">Humedad 2</span>
+              </label>
+            </div>
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="H3">
+                <span class="check"></span>
+                <span class="control-label">Humedad 3</span>
+              </label>
+            </div>
+            <div class="control">
+              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="HP">
+                <span class="check"></span>
+                <span class="control-label">Humedad Promedio</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card has-table">
+    <header class="card-header">
+      <p class="card-header-title">
+        <span class="icon"><i class="mdi mdi-database"></i></span>
+        Registros de Sensores
+      </p>
+    </header>
+    
+    <div class="card-content">
+      <table class="center-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th id="HT1">Temperatura 1</th>
+            <th id="HT2">Temperatura 2</th>
+            <th id="HT3">Temperatura 3</th>
+            <th class="highlight" id="HTP">Promedio Temp</th>
+            <th id="HH1">Humedad 1</th>
+            <th id="HH2">Humedad 2</th>
+            <th id="HH3">Humedad 3</th>
+            <th class="highlight" id="HHP">Promedio Hum</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for registro in page_obj %}
+          <tr>
+            <td>{{ registro.timestamp }}</td>
+            <td id="CT1">{{ registro.temperature1 }} °C</td>
+            <td id="CT2">{{ registro.temperature1 }} °C</td>
+            <td id="CT3">{{ registro.temperature3 }} °C</td>
+            <td class="highlight" id="CTP">{{ registro.temperature1 }} °C</td>
+            <td id="CH1">{{ registro.humidity1 }} %</td>
+            <td id="CH2">{{ registro.humidity2 }} %</td>
+            <td id="CH3">{{ registro.humidity3 }} %</td>
+            <td class="highlight" id="CHP">{{ registro.humidity1 }} %</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pagination">
+    <ul class="pagination-list">
+      {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}" class="button blue" >Anterior</a></li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+      <li class="pagination-item {% if page_obj.number == num %}active{% endif %}">
+        <a href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}" class="button blue" >Siguiente</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+</section>
+
+<style>
+  .center-table th, 
+  .center-table td {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  /* Centramos la lista de paginación */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  /* Diseño de la lista de paginación */
+  .pagination-list {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    align-items: center; /* Alinea verticalmente todos los elementos */
+  }
+
+  /* Estilo de los números */
+  .pagination-item {
+    margin: 0 5px;
+  }
+
+  .pagination-item a {
+    text-decoration: none;
+    color: #007BFF;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .pagination-item a:hover {
+    background-color: #f0f0f0;
+    color: #0056b3;
+  }
+
+  /* Resaltar la página activa */
+  .pagination-item.active a {
+    background-color: #007BFF;
+    color: white;
+    border-color: #007BFF;
+  }
+
+  /* Botones de "Anterior" y "Siguiente" */
+  .button {
+    background-color: #007BFF;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  .button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Aseguramos que todos los elementos tengan el mismo tamaño */
+  .button, .pagination-item a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 38px; /* Asegúrate de que sea consistente con el padding */
+  }
+
+  /* Estilo para destacar las columnas de promedio */
+  .highlight {
+    {% comment %} background-color: #f9f871; /* Fondo amarillo claro */ {% endcomment %}
+    font-weight: bold; /* Texto en negrita */
+    color: #333; /* Color de texto */
+    {% comment %} border-left: 2px solid #f0d62b; /* Línea decorativa */ {% endcomment %}
+    {% comment %} border-right: 2px solid #f0d62b; {% endcomment %}
+  }
+
+  /* Ajuste adicional para celdas centradas */
+  .center-table th.highlight, 
+  .center-table td.highlight {
+    text-align: center;
+  }
+</style>
+
+<script>
+  // Obtener los elementos de los checkboxes
+const T1 = document.getElementById("T1");
+const T2 = document.getElementById("T2");
+const T3 = document.getElementById("T3");
+const TP = document.getElementById("TP");
+
+const H1 = document.getElementById("H1");
+const H2 = document.getElementById("H2");
+const H3 = document.getElementById("H3");
+const HP = document.getElementById("HP");
+
+// Función para ocultar o mostrar las columnas según el estado de los checkboxes
+function toggleColumnVisibility() {
+  const CT1 = document.querySelectorAll("#CT1, #HT1");
+  const CT2 = document.querySelectorAll("#CT2, #HT2");
+  const CT3 = document.querySelectorAll("#CT3, #HT3");
+  const CTP = document.querySelectorAll("#CTP, #HTP");
+
+  const CH1 = document.querySelectorAll("#CH1, #HH1");
+  const CH2 = document.querySelectorAll("#CH2, #HH2");
+  const CH3 = document.querySelectorAll("#CH3, #HH3");
+  const CHP = document.querySelectorAll("#CHP, #HHP");
+
+  // Mostrar u ocultar la columna de Temperatura
+  CT1.forEach(col => {
+    col.style.display = T1.checked ? "" : "none";
+  });
+
+  CT2.forEach(col => {
+    col.style.display = T2.checked ? "" : "none";
+  });
+
+  CT3.forEach(col => {
+    col.style.display = T3.checked ? "" : "none";
+  });
+
+  CTP.forEach(col => {
+    col.style.display = TP.checked ? "" : "none";
+  });
+
+  // Mostrar u ocultar la columna de Humedad
+  CH1.forEach(col => {
+    col.style.display = H1.checked ? "" : "none";
+  });
+
+  CH2.forEach(col => {
+    col.style.display = H2.checked ? "" : "none";
+  });
+
+  CH3.forEach(col => {
+    col.style.display = H3.checked ? "" : "none";
+  });
+
+  CHP.forEach(col => {
+    col.style.display = HP.checked ? "" : "none";
+  });
+}
+
+// Función para guardar el estado de los checkboxes en Local Storage
+function saveCheckboxState() {
+  localStorage.setItem("T1", T1.checked);
+  localStorage.setItem("T2", T2.checked);
+  localStorage.setItem("T3", T3.checked);
+  localStorage.setItem("TP", TP.checked);
+  localStorage.setItem("H1", H1.checked);
+  localStorage.setItem("H2", H2.checked);
+  localStorage.setItem("H3", H3.checked);
+  localStorage.setItem("HP", HP.checked);
+}
+
+// Función para cargar el estado de los checkboxes desde Local Storage
+function loadCheckboxState() {
+  if (localStorage.getItem("T1") !== null) T1.checked = JSON.parse(localStorage.getItem("T1"));
+  if (localStorage.getItem("T2") !== null) T2.checked = JSON.parse(localStorage.getItem("T2"));
+  if (localStorage.getItem("T3") !== null) T3.checked = JSON.parse(localStorage.getItem("T3"));
+  if (localStorage.getItem("TP") !== null) TP.checked = JSON.parse(localStorage.getItem("TP"));
+  if (localStorage.getItem("H1") !== null) H1.checked = JSON.parse(localStorage.getItem("H1"));
+  if (localStorage.getItem("H2") !== null) H2.checked = JSON.parse(localStorage.getItem("H2"));
+  if (localStorage.getItem("H3") !== null) H3.checked = JSON.parse(localStorage.getItem("H3"));
+  if (localStorage.getItem("HP") !== null) HP.checked = JSON.parse(localStorage.getItem("HP"));
+}
+
+// Ejecutar la función al cargar la página
+window.onload = function() {
+  loadCheckboxState();
+  toggleColumnVisibility();
+};
+
+// Guardar el estado de los checkboxes cada vez que se cambie su estado
+T1.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+T2.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+T3.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+TP.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+
+H1.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+H2.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+H3.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+HP.addEventListener("change", function() {
+  saveCheckboxState();
+  toggleColumnVisibility();
+});
+</script>
+{% endblock %}

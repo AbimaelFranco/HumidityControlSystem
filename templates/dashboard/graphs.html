@@ -1,0 +1,140 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<section class="is-hero-bar">
+  <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+    <h1 class="title">
+      Gráficas
+    </h1>
+  </div>
+</section>
+
+<section class="section main-section">
+
+  <!-- Grafica Temperatura -->
+  <div class="card mb-6">
+    <header class="card-header">
+      <p class="card-header-title">
+        <span class="icon"><i class="mdi mdi-finance"></i></span>
+        Temperatura - 24 h
+      </p>
+    </header>
+    <div class="card-content">
+      <canvas id="temperature-chart" width="400" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Grafica Humedad -->
+  <div class="card mb-6">
+    <header class="card-header">
+      <p class="card-header-title">
+        <span class="icon"><i class="mdi mdi-finance"></i></span>
+        Humedad - 24 h
+      </p>
+    </header>
+    <div class="card-content">
+      <canvas id="humidity-chart" width="400" height="200"></canvas>
+    </div>
+  </div>
+
+</section>
+
+<script>
+  // Obtener datos de Django
+  const timestamps = {{ timestamps|safe }};
+  const humidity1 = {{ humidity1|safe }};
+  const humidity2 = {{ humidity2|safe }};
+  const humidity3 = {{ humidity3|safe }};
+  const avgHumidity = {{ avg_humidity|safe }};
+  const temperature1 = {{ temperature1|safe }};
+  const temperature2 = {{ temperature2|safe }};
+  const temperature3 = {{ temperature3|safe }};
+  const avgTemperature = {{ avg_temperature|safe }};
+
+  // Grafica de Temperatura
+  new Chart(document.getElementById('temperature-chart'), {
+    type: 'line',
+    data: {
+      labels: timestamps,
+      datasets: [
+        {
+          label: 'Sensor 1',
+          data: temperature1,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 2',
+          data: temperature2,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 3',
+          data: temperature3,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false,
+        },
+        {
+          label: 'Promedio',
+          data: avgTemperature,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderDash: [5, 5],
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Hora' } },
+        y: { title: { display: true, text: 'Temperatura (°C)' } },
+      },
+    },
+  });
+
+  // Grafica de Humedad
+  new Chart(document.getElementById('humidity-chart'), {
+    type: 'line',
+    data: {
+      labels: timestamps,
+      datasets: [
+        {
+          label: 'Sensor 1',
+          data: humidity1,
+          borderColor: 'rgba(255, 206, 86, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 2',
+          data: humidity2,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false,
+        },
+        {
+          label: 'Sensor 3',
+          data: humidity3,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          fill: false,
+        },
+        {
+          label: 'Promedio',
+          data: avgHumidity,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderDash: [5, 5],
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Hora' } },
+        y: { title: { display: true, text: 'Humedad (%)' } },
+      },
+    },
+  });
+</script>
+{% endblock %}
