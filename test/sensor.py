@@ -15,7 +15,7 @@ DB_CONFIG = {
     'port': '5432'
 }
 
-def insert_reading(humidity, temperature):
+def insert_reading(humidity1, temperature1, humidity2, temperature2, humidityA, temperatureA):
     """Inserta una lectura de humedad y temperatura en la tabla test_sensor1."""
     try:
         # Conexión a la base de datos
@@ -24,10 +24,10 @@ def insert_reading(humidity, temperature):
 
         # Consulta para insertar los datos
         insert_query = sql.SQL("""
-            INSERT INTO dashboard_records (humidity1, temperature1, humidity2, temperature2, humidity3, temperature3, timestamp)
+            INSERT INTO dashboard_records (humidity1, temperature1, humidity2, temperature2, humidity_average , temperature_average, timestamp)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         """)
-        cursor.execute(insert_query, (humidity, temperature, humidity, temperature, humidity, temperature, datetime.now()))
+        cursor.execute(insert_query, (humidity1, temperature1, humidity2, temperature2, humidityA, temperatureA, datetime.now()))
 
         # Confirmar los cambios
         connection.commit()

@@ -95,11 +95,9 @@
   const timestamps = {{ timestamps|safe }};
   const humidity1 = {{ humidity1|safe }};
   const humidity2 = {{ humidity2|safe }};
-  const humidity3 = {{ humidity3|safe }};
   const avgHumidity = {{ avg_humidity|safe }};
   const temperature1 = {{ temperature1|safe }};
   const temperature2 = {{ temperature2|safe }};
-  const temperature3 = {{ temperature3|safe }};
   const avgTemperature = {{ avg_temperature|safe }};
 
   // Grafica de Temperatura
@@ -118,12 +116,6 @@
           label: 'Sensor 2',
           data: temperature2,
           borderColor: 'rgba(54, 162, 235, 1)',
-          fill: false,
-        },
-        {
-          label: 'Sensor 3',
-          data: temperature3,
-          borderColor: 'rgba(75, 192, 192, 1)',
           fill: false,
         },
         {
@@ -160,12 +152,6 @@
           label: 'Sensor 2',
           data: humidity2,
           borderColor: 'rgba(75, 192, 192, 1)',
-          fill: false,
-        },
-        {
-          label: 'Sensor 3',
-          data: humidity3,
-          borderColor: 'rgba(54, 162, 235, 1)',
           fill: false,
         },
         {

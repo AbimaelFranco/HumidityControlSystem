@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'HumidityControlSystem.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'humiditycontrol',
+        'NAME': 'humidity_temperature_control',
         'USER': 'django_user',
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': 'localhost',

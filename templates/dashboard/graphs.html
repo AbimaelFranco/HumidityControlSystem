@@ -1,7 +1,6 @@
 {% extends 'dashboard/base.html' %}
 
 {% block content %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <section class="is-hero-bar">
   <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
@@ -26,6 +25,19 @@
     </div>
   </div>
 
+
+  <div class="card mb-6">
+    <header class="card-header">
+      <p class="card-header-title">
+        <span class="icon"><i class="mdi mdi-finance"></i></span>
+        Temperatura - 24 h
+      </p>
+    </header>
+    <div class="card-content">
+      <canvas id="temperature-chart-range" width="400" height="200"></canvas>
+    </div>
+  </div>
+
   <!-- Grafica Humedad -->
   <div class="card mb-6">
     <header class="card-header">
@@ -39,25 +51,45 @@
     </div>
   </div>
 
+
+  <div class="card mb-6">
+    <header class="card-header">
+      <p class="card-header-title">
+        <span class="icon"><i class="mdi mdi-finance"></i></span>
+        Humedad - 24 h
+      </p>
+    </header>
+    <div class="card-content">
+      <canvas id="humidity-chart-range" width="400" height="200"></canvas>
+    </div>
+  </div>
+
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
 
 <script>
   // Obtener datos de Django
   const timestamps = {{ timestamps|safe }};
   const humidity1 = {{ humidity1|safe }};
   const humidity2 = {{ humidity2|safe }};
-  const humidity3 = {{ humidity3|safe }};
   const avgHumidity = {{ avg_humidity|safe }};
   const temperature1 = {{ temperature1|safe }};
   const temperature2 = {{ temperature2|safe }};
-  const temperature3 = {{ temperature3|safe }};
   const avgTemperature = {{ avg_temperature|safe }};
 
-  // Grafica de Temperatura
+  // Límites para temperatura
+  const tempUpperLimit = 25; // 23 + 2
+  const tempLowerLimit = 21; // 23 - 2
+
+  // Límites para humedad
+  const humidityLowerLimit = 95;
+
   new Chart(document.getElementById('temperature-chart'), {
     type: 'line',
     data: {
-      labels: timestamps,
+      labels: timestamps, // Mantén las etiquetas originales
       datasets: [
         {
           label: 'Sensor 1',
@@ -69,12 +101,6 @@
           label: 'Sensor 2',
           data: temperature2,
           borderColor: 'rgba(54, 162, 235, 1)',
-          fill: false,
-        },
-        {
-          label: 'Sensor 3',
-          data: temperature3,
-          borderColor: 'rgba(75, 192, 192, 1)',
           fill: false,
         },
         {
@@ -90,7 +116,7 @@
       responsive: true,
       scales: {
         x: { title: { display: true, text: 'Hora' } },
-        y: { title: { display: true, text: 'Temperatura (°C)' } },
+        y: { title: { display: true, text: 'Humedad (%)' } },
       },
     },
   });
@@ -114,12 +140,6 @@
           fill: false,
         },
         {
-          label: 'Sensor 3',
-          data: humidity3,
-          borderColor: 'rgba(54, 162, 235, 1)',
-          fill: false,
-        },
-        {
           label: 'Promedio',
           data: avgHumidity,
           borderColor: 'rgba(153, 102, 255, 1)',
@@ -136,5 +156,121 @@
       },
     },
   });
+
+  // Grafica de Temperatura - RANGO
+  new Chart(document.getElementById('temperature-chart-range'), {
+    type: 'line',
+    data: {
+      labels: timestamps,
+      datasets: [
+        {
+          label: 'Promedio',
+          data: avgTemperature,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderDash: [5, 5],
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Hora' } },
+        y: { title: { display: true, text: 'Temperatura (°C)' } },
+      },
+      plugins: {
+        annotation: {
+          annotations: {
+            upperLimit: {
+              type: 'line',
+              yMin: tempUpperLimit,
+              yMax: tempUpperLimit,
+              borderColor: 'rgba(255, 0, 0, 0.5)',
+              borderWidth: 2,
+              label: {
+                content: 'Límite superior',
+                enabled: true,
+                position: 'end',
+              },
+            },
+            lowerLimit: {
+              type: 'line',
+              yMin: tempLowerLimit,
+              yMax: tempLowerLimit,
+              borderColor: 'rgba(0, 255, 0, 0.5)',
+              borderWidth: 2,
+              label: {
+                content: 'Límite inferior',
+                enabled: true,
+                position: 'start',
+              },
+            },
+            greenRange: {
+              type: 'box',
+              yMin: tempLowerLimit,
+              yMax: tempUpperLimit, // Máximo rango válido
+              backgroundColor: 'rgba(0, 255, 0, 0.1)', // Verde claro
+            },
+            redRange1: {
+              type: 'box',
+              yMin: tempUpperLimit,
+              yMax: 25.5, // Máximo rango válido
+              backgroundColor: 'rgba(255, 0, 0, 0.1)', // Verde claro
+            },
+            redRange2: {
+              type: 'box',
+              yMin: 20.5,
+              yMax: tempLowerLimit, // Máximo rango válido
+              backgroundColor: 'rgba(255, 0, 0, 0.1)', // Verde claro
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Grafica de Humedad - RANGO
+  new Chart(document.getElementById('humidity-chart-range'), {
+    type: 'line',
+    data: {
+      labels: timestamps,
+      datasets: [
+        {
+          label: 'Promedio',
+          data: avgHumidity,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          borderDash: [5, 5],
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Hora' } },
+        y: { title: { display: true, text: 'Humedad (%)' } },
+      },
+      plugins: {
+        annotation: {
+          annotations: {
+            greenRange: {
+              type: 'box',
+              yMin: humidityLowerLimit,
+              yMax: 100, // Máximo rango válido
+              backgroundColor: 'rgba(0, 255, 0, 0.1)', // Verde claro
+            },
+            redRangeLower: {
+              type: 'box',
+              yMin: 0,
+              yMax: humidityLowerLimit,
+              backgroundColor: 'rgba(255, 0, 0, 0.1)', // Rojo claro
+            },
+          },
+        },
+      },
+    },
+  });
 </script>
+
+
 {% endblock %}

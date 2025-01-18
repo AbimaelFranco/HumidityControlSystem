@@ -35,12 +35,6 @@
               </label>
             </div>
             <div class="control">
-              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="T3">
-                <span class="check"></span>
-                <span class="control-label">Temperatura 3</span>
-              </label>
-            </div>
-            <div class="control">
               <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="TP">
                 <span class="check"></span>
                 <span class="control-label">Temperatura Promedio</span>
@@ -56,12 +50,6 @@
               <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="H2">
                 <span class="check"></span>
                 <span class="control-label">Humedad 2</span>
-              </label>
-            </div>
-            <div class="control">
-              <label class="checkbox"><input type="checkbox" value="lorem" checked="" id="H3">
-                <span class="check"></span>
-                <span class="control-label">Humedad 3</span>
               </label>
             </div>
             <div class="control">
@@ -92,11 +80,9 @@
             <th>Fecha</th>
             <th id="HT1">Temperatura 1</th>
             <th id="HT2">Temperatura 2</th>
-            <th id="HT3">Temperatura 3</th>
             <th class="highlight" id="HTP">Promedio Temp</th>
             <th id="HH1">Humedad 1</th>
             <th id="HH2">Humedad 2</th>
-            <th id="HH3">Humedad 3</th>
             <th class="highlight" id="HHP">Promedio Hum</th>
           </tr>
         </thead>
@@ -106,11 +92,9 @@
             <td>{{ registro.timestamp }}</td>
             <td id="CT1">{{ registro.temperature1 }} °C</td>
             <td id="CT2">{{ registro.temperature1 }} °C</td>
-            <td id="CT3">{{ registro.temperature3 }} °C</td>
             <td class="highlight" id="CTP">{{ registro.temperature1 }} °C</td>
             <td id="CH1">{{ registro.humidity1 }} %</td>
             <td id="CH2">{{ registro.humidity2 }} %</td>
-            <td id="CH3">{{ registro.humidity3 }} %</td>
             <td class="highlight" id="CHP">{{ registro.humidity1 }} %</td>
           </tr>
           {% endfor %}
@@ -233,24 +217,20 @@
   // Obtener los elementos de los checkboxes
 const T1 = document.getElementById("T1");
 const T2 = document.getElementById("T2");
-const T3 = document.getElementById("T3");
 const TP = document.getElementById("TP");
 
 const H1 = document.getElementById("H1");
 const H2 = document.getElementById("H2");
-const H3 = document.getElementById("H3");
 const HP = document.getElementById("HP");
 
 // Función para ocultar o mostrar las columnas según el estado de los checkboxes
 function toggleColumnVisibility() {
   const CT1 = document.querySelectorAll("#CT1, #HT1");
   const CT2 = document.querySelectorAll("#CT2, #HT2");
-  const CT3 = document.querySelectorAll("#CT3, #HT3");
   const CTP = document.querySelectorAll("#CTP, #HTP");
 
   const CH1 = document.querySelectorAll("#CH1, #HH1");
   const CH2 = document.querySelectorAll("#CH2, #HH2");
-  const CH3 = document.querySelectorAll("#CH3, #HH3");
   const CHP = document.querySelectorAll("#CHP, #HHP");
 
   // Mostrar u ocultar la columna de Temperatura
@@ -260,10 +240,6 @@ function toggleColumnVisibility() {
 
   CT2.forEach(col => {
     col.style.display = T2.checked ? "" : "none";
-  });
-
-  CT3.forEach(col => {
-    col.style.display = T3.checked ? "" : "none";
   });
 
   CTP.forEach(col => {
@@ -279,10 +255,6 @@ function toggleColumnVisibility() {
     col.style.display = H2.checked ? "" : "none";
   });
 
-  CH3.forEach(col => {
-    col.style.display = H3.checked ? "" : "none";
-  });
-
   CHP.forEach(col => {
     col.style.display = HP.checked ? "" : "none";
   });
@@ -292,11 +264,9 @@ function toggleColumnVisibility() {
 function saveCheckboxState() {
   localStorage.setItem("T1", T1.checked);
   localStorage.setItem("T2", T2.checked);
-  localStorage.setItem("T3", T3.checked);
   localStorage.setItem("TP", TP.checked);
   localStorage.setItem("H1", H1.checked);
   localStorage.setItem("H2", H2.checked);
-  localStorage.setItem("H3", H3.checked);
   localStorage.setItem("HP", HP.checked);
 }
 
@@ -304,11 +274,9 @@ function saveCheckboxState() {
 function loadCheckboxState() {
   if (localStorage.getItem("T1") !== null) T1.checked = JSON.parse(localStorage.getItem("T1"));
   if (localStorage.getItem("T2") !== null) T2.checked = JSON.parse(localStorage.getItem("T2"));
-  if (localStorage.getItem("T3") !== null) T3.checked = JSON.parse(localStorage.getItem("T3"));
   if (localStorage.getItem("TP") !== null) TP.checked = JSON.parse(localStorage.getItem("TP"));
   if (localStorage.getItem("H1") !== null) H1.checked = JSON.parse(localStorage.getItem("H1"));
   if (localStorage.getItem("H2") !== null) H2.checked = JSON.parse(localStorage.getItem("H2"));
-  if (localStorage.getItem("H3") !== null) H3.checked = JSON.parse(localStorage.getItem("H3"));
   if (localStorage.getItem("HP") !== null) HP.checked = JSON.parse(localStorage.getItem("HP"));
 }
 
@@ -327,10 +295,6 @@ T2.addEventListener("change", function() {
   saveCheckboxState();
   toggleColumnVisibility();
 });
-T3.addEventListener("change", function() {
-  saveCheckboxState();
-  toggleColumnVisibility();
-});
 TP.addEventListener("change", function() {
   saveCheckboxState();
   toggleColumnVisibility();
@@ -341,10 +305,6 @@ H1.addEventListener("change", function() {
   toggleColumnVisibility();
 });
 H2.addEventListener("change", function() {
-  saveCheckboxState();
-  toggleColumnVisibility();
-});
-H3.addEventListener("change", function() {
   saveCheckboxState();
   toggleColumnVisibility();
 });
