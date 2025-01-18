@@ -1,11 +1,15 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+import pandas as pd
+from openpyxl import Workbook
 from django.utils.timezone import now, timedelta, localtime
 from django.core.paginator import Paginator
 from dashboard.models import Records
 
+
 def dashboard_home(request):
     # Obtener registros de las últimas 24 horas
-    last_24_hours = now() - timedelta(hours=24)
+    last_24_hours = now() - timedelta(hours=1)
     records = Records.objects.filter(timestamp__gte=last_24_hours)
     records = records[::-1]
 
@@ -102,3 +106,38 @@ def registers(request):
         'page_obj': page_obj,
     }
     return render(request, 'dashboard/registers.html', context)
+
+def export_to_excel(request):
+    # Crear un libro de trabajo
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Records"
+
+    # Escribir los encabezados en el archivo Excel
+    headers = [
+        'ID', 'Humidity Sensor 1', 'Temperature Sensor 1', 
+        'Humidity Sensor 2', 'Temperature Sensor 2', 
+        'Humidity Average', 'Temperature Average', 'Timestamp'
+    ]
+    ws.append(headers)
+
+    # Obtener todos los registros
+    records = Records.objects.all()
+
+    # Agregar los datos de los registros al archivo Excel
+    for record in records:
+        ws.append([
+            record.id, record.humidity1, record.temperature1,
+            record.humidity2, record.temperature2,
+            record.humidity_average, record.temperature_average,
+            record.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        ])
+
+    # Configurar la respuesta HTTP para descargar el archivo Excel
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="records.xlsx"'
+
+    # Guardar el archivo Excel en la respuesta
+    wb.save(response)
+
+    return response
