@@ -58,11 +58,24 @@
                 <span class="control-label">Humedad Promedio</span>
               </label>
             </div>
+
+            
+            <div class="field">
+              <div class="control" style="display: flex; align-items: center; justify-content: flex-start;">
+                <a href="{% url 'export_to_excel' %}" class="button green">
+                  Descargar
+                </a>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
   </div>
+
+
+  
 
 
   <div class="card has-table">
@@ -119,14 +132,30 @@
     </ul>
   </div>
 
-  <div class="card-footer">
-    <a href="{% url 'export_to_excel' %}" class="button is-primary">Exportar a Excel</a>
-  </div>
-  
 
 </section>
 
 <style>
+
+  /* Aseguramos que todos los elementos de la fila tengan la misma altura y estén alineados */
+  .field-body .control {
+    margin-top: 15px;
+    vertical-align: middle;
+    display: flex;
+    align-items: center; /* Alineamos verticalmente */
+  }
+  
+  /* Estilo adicional para centrar el botón a la altura de los demás controles */
+  .field .control {
+    display: flex;
+    align-items: center; /* Centrado vertical */
+  }
+  
+  .button {
+    margin-left: 10px; /* Ajuste si es necesario para separación */
+  }
+  
+
   .center-table th, 
   .center-table td {
     text-align: center;

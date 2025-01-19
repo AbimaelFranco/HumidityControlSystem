@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import pandas as pd
 from openpyxl import Workbook
+from openpyxl.styles import Alignment, Font, PatternFill
 from django.utils.timezone import now, timedelta, localtime
 from django.core.paginator import Paginator
 from dashboard.models import Records
@@ -111,33 +112,46 @@ def export_to_excel(request):
     # Crear un libro de trabajo
     wb = Workbook()
     ws = wb.active
-    ws.title = "Records"
+    ws.title = "Registros"
 
-    # Escribir los encabezados en el archivo Excel
+    # Estilo de encabezados
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="center")
+
+    # Escribir los encabezados en el archivo Excel (nuevo orden de columnas)
     headers = [
-        'ID', 'Humidity Sensor 1', 'Temperature Sensor 1', 
-        'Humidity Sensor 2', 'Temperature Sensor 2', 
-        'Humidity Average', 'Temperature Average', 'Timestamp'
+        'ID', 'Timestamp', 'Temperature Sensor 1', 'Temperature Sensor 2', 
+        'Temperature Average', 'Humidity Sensor 1', 'Humidity Sensor 2', 
+        'Humidity Average'
     ]
     ws.append(headers)
+
+    # Aplicar estilo a los encabezados
+    for cell in ws[1]:
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_alignment
 
     # Obtener todos los registros
     records = Records.objects.all()
 
-    # Agregar los datos de los registros al archivo Excel
+    # Agregar los datos de los registros al archivo Excel (nuevo orden)
     for record in records:
         ws.append([
-            record.id, record.humidity1, record.temperature1,
-            record.humidity2, record.temperature2,
-            record.humidity_average, record.temperature_average,
-            record.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            record.id, record.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 
+            record.temperature1, record.temperature2, record.temperature_average,
+            record.humidity1, record.humidity2, record.humidity_average
         ])
 
     # Configurar la respuesta HTTP para descargar el archivo Excel
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename="records.xlsx"'
+    response['Content-Disposition'] = 'attachment; filename="Registros_Humedad_y_Temperatura.xlsx"'
 
     # Guardar el archivo Excel en la respuesta
     wb.save(response)
 
     return response
+
+def configuration(request):
+    return render(request, 'dashboard/config.html')

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard - Home</title>
+  <title>Dashboard</title>
 
   <!-- Tailwind is included -->
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -28,7 +28,10 @@
     <aside class="aside is-placed-left is-expanded">
       <div class="aside-tools">
         <div>
-          Admin <b class="font-black">One</b>
+          Admin
+          <hr>
+          Temperatura & Humedad
+          {% comment %} <b class="font-black">Temperatura</b> & <b class="font-black">Humedad</b> {% endcomment %}
         </div>
       </div>
       <div class="menu is-menu-main">
@@ -56,7 +59,7 @@
             </a>
           </li>
           <li>
-            <a href="login.html">
+            <a href="{% url 'admin:index' %}">
               <span class="icon"><i class="mdi mdi-lock"></i></span>
               <span class="menu-item-label">Configuración</span>
             </a>
