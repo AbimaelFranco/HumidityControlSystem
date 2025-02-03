@@ -18,7 +18,7 @@ class RecordsAdmin(ExportMixin, admin.ModelAdmin):
     list_per_page = 20
     search_fields = ('id', 'timestamp')
     list_filter = ('timestamp',)
-    ordering = ('-timestamp',)
+    # ordering = ('-timestamp',)
     
     resource_class = RecordsResource  # Asocia el recurso de exportación
 

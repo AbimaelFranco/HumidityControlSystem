@@ -26,6 +26,9 @@ class Records(models.Model):
 
 class configuration(models.Model):
     TIME_CHOICES = [
+        ('15S', '15 segundos'),
+        ('30S', '30 segundos'),
+        ('1M', '1 minuto'),
         ('5M', '5 minutos'),
         ('10M', '10 minutos'),
         ('30M', '30 minutos'),

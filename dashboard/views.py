@@ -5,38 +5,46 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from django.utils.timezone import now, timedelta, localtime
 from django.core.paginator import Paginator
-from dashboard.models import Records
+from dashboard.models import Records, configuration
 
 
 def dashboard_home(request):
     # Obtener registros de las últimas 24 horas
     last_24_hours = now() - timedelta(hours=1)
     records = Records.objects.filter(timestamp__gte=last_24_hours)
-    records = records[::-1]
+    # records = records[::-1]
 
-    # Organizar datos para la gráfica y convertir de Decimal a float
-    timestamps = [localtime(record.timestamp).strftime("%H:%M") for record in records]  # Convertir a zona horaria local
-    
-    # Convertir a float para evitar problemas con los tipos Decimal
-    humidity1 = [float(record.humidity1) for record in records]
-    temperature1 = [float(record.temperature1) for record in records]
-    humidity2 = [float(record.humidity2) for record in records]
-    temperature2 = [float(record.temperature2) for record in records]
+    try:
+        # Organizar datos para la gráfica y convertir de Decimal a float
+        timestamps = [localtime(record.timestamp).strftime("%H:%M") for record in records]  # Convertir a zona horaria local
+        
+        # Convertir a float para evitar problemas con los tipos Decimal
+        humidity1 = [float(record.humidity1) for record in records]
+        temperature1 = [float(record.temperature1) for record in records]
+        humidity2 = [float(record.humidity2) for record in records]
+        temperature2 = [float(record.temperature2) for record in records]
 
-    # Valores promedio
-    avg_humidity = [float(record.humidity_average) for record in records]
-    avg_temperature = [float(record.temperature_average) for record in records]
+        # Valores promedio
+        avg_humidity = [float(record.humidity_average) for record in records]
+        avg_temperature = [float(record.temperature_average) for record in records]
 
-     # Obtener el último registro
-    last_record = records[-1]
+        # Obtener el último registro
+        last_record = records.last()
 
-    # Obtener los últimos valores de temperatura, humedad y la hora
-    last_timestamp = localtime(last_record.timestamp).strftime("%H:%M")
-    last_avg_humidity = float(last_record.humidity_average)
-    last_avg_temperature = float(last_record.temperature_average)
+        # Obtener los últimos valores de temperatura, humedad y la hora
+        last_timestamp = localtime(last_record.timestamp).strftime("%H:%M")
+        last_avg_humidity = float(last_record.humidity_average)
+        last_avg_temperature = float(last_record.temperature_average)
 
+        #Obtener configuraciones
+        configurations = configuration.objects.all()
+        last_configuration = configurations[0]
+        temperature_min_alert = float(last_configuration.temperature_min_alert)
+        temperature_max_alert = float(last_configuration.temperature_max_alert)
+        humidity_min_alert = float(last_configuration.humidity_min_alert)
+        humidity_max_alert = float(last_configuration.humidity_max_alert)
 
-    context = {
+        context = {
         'timestamps': timestamps,
         'humidity1': humidity1,
         'temperature1': temperature1,
@@ -47,8 +55,31 @@ def dashboard_home(request):
         'last_timestamp': last_timestamp,
         'last_avg_humidity': last_avg_humidity,
         'last_avg_temperature': last_avg_temperature,
+        'temperature_min_alert':temperature_min_alert,
+        'temperature_max_alert':temperature_max_alert,
+        'humidity_min_alert':humidity_min_alert,
+        'humidity_max_alert':humidity_max_alert,
     }
     
+    except:
+
+        context = {
+        'timestamps': '0',
+        'humidity1': 0,
+        'temperature1': 0,
+        'humidity2': 0,
+        'temperature2': 0,
+        'avg_humidity': 0,
+        'avg_temperature': 0,
+        'last_timestamp': 0,
+        'last_avg_humidity': 0,
+        'last_avg_temperature': 0,
+        'temperature_min_alert':0,
+        'temperature_max_alert':0,
+        'humidity_min_alert':0,
+        'humidity_max_alert':0,
+    }  
+
     # Enviar los datos al template
     return render(request, 'dashboard/home.html', context)
 
@@ -56,48 +87,67 @@ def graphs(request):
     # Obtener registros de las últimas 24 horas
     last_24_hours = now() - timedelta(hours=24)
     records = Records.objects.filter(timestamp__gte=last_24_hours)
-    records = records[::-1]
+    # records = records[::-1]
 
-    # Organizar datos para la gráfica y convertir de Decimal a float
-    timestamps = [localtime(record.timestamp).strftime("%H:%M") for record in records]  # Convertir a zona horaria local
-    
-    # Convertir a float para evitar problemas con los tipos Decimal
-    humidity1 = [float(record.humidity1) for record in records]
-    temperature1 = [float(record.temperature1) for record in records]
-    humidity2 = [float(record.humidity2) for record in records]
-    temperature2 = [float(record.temperature2) for record in records]
+    try:
+        # Organizar datos para la gráfica y convertir de Decimal a float
+        timestamps = [localtime(record.timestamp).strftime("%H:%M") for record in records]  # Convertir a zona horaria local
+        
+        # Convertir a float para evitar problemas con los tipos Decimal
+        humidity1 = [float(record.humidity1) for record in records]
+        temperature1 = [float(record.temperature1) for record in records]
+        humidity2 = [float(record.humidity2) for record in records]
+        temperature2 = [float(record.temperature2) for record in records]
 
-    # Valores promedio
-    avg_humidity = [float(record.humidity_average) for record in records]
-    avg_temperature = [float(record.temperature_average) for record in records]
+        # Valores promedio
+        avg_humidity = [float(record.humidity_average) for record in records]
+        avg_temperature = [float(record.temperature_average) for record in records]
 
-     # Obtener el último registro
-    last_record = records[-1]
+        # Obtener el último registro
+        last_record = records.last()
 
-    # Obtener los últimos valores de temperatura, humedad y la hora
-    last_timestamp = localtime(last_record.timestamp).strftime("%H:%M")
-    last_avg_humidity = float(last_record.humidity_average)
-    last_avg_temperature = float(last_record.temperature_average)
+        # Obtener los últimos valores de temperatura, humedad y la hora
+        last_timestamp = localtime(last_record.timestamp).strftime("%H:%M")
+        last_avg_humidity = float(last_record.humidity_average)
+        last_avg_temperature = float(last_record.temperature_average)
 
 
-    context = {
-        'timestamps': timestamps,
-        'humidity1': humidity1,
-        'temperature1': temperature1,
-        'humidity2': humidity2,
-        'temperature2': temperature2,
-        'avg_humidity': avg_humidity,
-        'avg_temperature': avg_temperature,
-        'last_timestamp': last_timestamp,
-        'last_avg_humidity': last_avg_humidity,
-        'last_avg_temperature': last_avg_temperature,
-    }
+        context = {
+            'timestamps': timestamps,
+            'humidity1': humidity1,
+            'temperature1': temperature1,
+            'humidity2': humidity2,
+            'temperature2': temperature2,
+            'avg_humidity': avg_humidity,
+            'avg_temperature': avg_temperature,
+            'last_timestamp': last_timestamp,
+            'last_avg_humidity': last_avg_humidity,
+            'last_avg_temperature': last_avg_temperature,
+        }
+    except:
+
+        context = {
+        'timestamps': '0',
+        'humidity1': 0,
+        'temperature1': 0,
+        'humidity2': 0,
+        'temperature2': 0,
+        'avg_humidity': 0,
+        'avg_temperature': 0,
+        'last_timestamp': 0,
+        'last_avg_humidity': 0,
+        'last_avg_temperature': 0,
+        'temperature_min_alert':0,
+        'temperature_max_alert':0,
+        'humidity_min_alert':0,
+        'humidity_max_alert':0,
+    }  
     
     # Enviar los datos al template
     return render(request, 'dashboard/graphs.html', context)
 
 def registers(request):
-    registros = Records.objects.all().order_by('timestamp')  # Ordenar por fecha y hora descendente
+    registros = Records.objects.all().order_by('-timestamp')  # Ordenar por fecha y hora descendente
     paginator = Paginator(registros, 20)  # 20 registros por página
 
     page_number = request.GET.get('page')  # Obtener el número de página desde los parámetros de la URL
@@ -152,6 +202,3 @@ def export_to_excel(request):
     wb.save(response)
 
     return response
-
-def configuration(request):
-    return render(request, 'dashboard/config.html')

@@ -104,11 +104,11 @@
           <tr>
             <td>{{ registro.timestamp }}</td>
             <td id="CT1">{{ registro.temperature1 }} °C</td>
-            <td id="CT2">{{ registro.temperature1 }} °C</td>
-            <td class="highlight" id="CTP">{{ registro.temperature1 }} °C</td>
+            <td id="CT2">{{ registro.temperature2 }} °C</td>
+            <td class="highlight" id="CTP">{{ registro.temperature_average }} °C</td>
             <td id="CH1">{{ registro.humidity1 }} %</td>
             <td id="CH2">{{ registro.humidity2 }} %</td>
-            <td class="highlight" id="CHP">{{ registro.humidity1 }} %</td>
+            <td class="highlight" id="CHP">{{ registro.humidity_average }} %</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -118,19 +118,30 @@
 
   <div class="pagination">
     <ul class="pagination-list">
-      {% if page_obj.has_previous %}
-      <li><a href="?page={{ page_obj.previous_page_number }}" class="button blue" >Anterior</a></li>
-      {% endif %}
-      {% for num in page_obj.paginator.page_range %}
-      <li class="pagination-item {% if page_obj.number == num %}active{% endif %}">
-        <a href="?page={{ num }}">{{ num }}</a>
-      </li>
-      {% endfor %}
-      {% if page_obj.has_next %}
-      <li><a href="?page={{ page_obj.next_page_number }}" class="button blue" >Siguiente</a></li>
-      {% endif %}
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1" class="button blue">Primero</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}" class="button blue">Anterior</a></li>
+        {% endif %}
+
+        {% with page_num=page_obj.number %}
+            {% with last_page=page_obj.paginator.num_pages %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num >= page_num|add:"-2" and num <= page_num|add:"2" %}
+                        <li class="pagination-item {% if page_obj.number == num %}active{% endif %}">
+                            <a href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            {% endwith %}
+        {% endwith %}
+
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}" class="button blue">Siguiente</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}" class="button blue">Último</a></li>
+        {% endif %}
     </ul>
-  </div>
+</div>
+
 
 
 </section>
