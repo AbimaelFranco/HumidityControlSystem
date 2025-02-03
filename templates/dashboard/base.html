@@ -30,7 +30,11 @@
       <div class="menu is-menu-main">
         <p class="menu-label">General</p>
         <ul class="menu-list">
-          <li class="active">
+          {% if request.path == '/dashboard/'%}
+            <li class="active">
+          {% else %}
+            <li class="--set-active-tables-html">
+          {% endif %}
             <a href="{% url 'dashboard_home' %}">
               <span class="icon"><i class="mdi mdi-desktop-mac"></i></span>
               <span class="menu-item-label">Dashboard</span>
@@ -39,13 +43,21 @@
         </ul>
         <p class="menu-label">Datos</p>
         <ul class="menu-list">
-          <li class="--set-active-tables-html">
+          {% if request.path == '/dashboard/graphs'%}
+            <li class="active">
+          {% else %}
+            <li class="--set-active-tables-html">
+          {% endif %}
             <a href="{% url 'graphs' %}">
               <span class="icon"><i class="mdi mdi-table"></i></span>
               <span class="menu-item-label">Gráficas</span>
             </a>
           </li>
-          <li class="--set-active-profile-html">
+          {% if request.path == '/dashboard/registers'%}
+            <li class="active">
+          {% else %}
+            <li class="--set-active-tables-html">
+          {% endif %}
             <a href="{% url 'registers' %}">
               <span class="icon"><i class="mdi mdi-account-circle"></i></span>
               <span class="menu-item-label">Registros</span>
