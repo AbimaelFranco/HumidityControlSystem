@@ -122,3 +122,14 @@ class configuration(models.Model):
 
     def __str__(self):
         return f"Configuration - Sampling: {self.get_sampling_time_display()}"
+
+class SystemSettings(models.Model):
+    name = models.CharField(max_length=100, unique=True)  # Ejemplo de un campo para la configuración
+    value = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "Actualizar Hora"
+        verbose_name_plural = "Actualizar Hora"
+
+    def __str__(self):
+        return f"{self.name}: {self.value}"

@@ -1,7 +1,12 @@
 from django.contrib import admin
 from import_export import resources
-from .models import Records, configuration
+from .models import Records, configuration, SystemSettings  
 from import_export.admin import ExportMixin  # Importa ExportMixin
+
+from django.urls import path
+from django.shortcuts import render
+from django.http import JsonResponse
+import datetime
 
 # Crear un recurso de exportación para Records
 class RecordsResource(resources.ModelResource):
@@ -30,6 +35,31 @@ class ConfigurationAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+    
+class SystemSettingsAdmin(admin.ModelAdmin):
+    change_list_template = "admin/update_time.html"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path("update-time/", self.admin_site.admin_view(self.update_time), name="update-time"),
+        ]
+        return custom_urls + urls
+
+    def update_time(self, request):
+        if request.method == "POST":
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            return JsonResponse({"datetime": current_time})
+        return JsonResponse({"error": "Invalid request"}, status=400)
+    
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+# 🔹 Registrar el modelo y la configuración en Django Admin
+admin.site.register(SystemSettings, SystemSettingsAdmin)
 
 # Registra el modelo en el admin
 admin.site.register(Records, RecordsAdmin)

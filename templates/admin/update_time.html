@@ -1,0 +1,60 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="field">
+    <div class="control" style="display: flex; align-items: center; justify-content: flex-start;">
+        <button id="update-time-btn" class="button-green">
+            Actualizar Hora del Sistema
+        </button>
+    </div>
+</div>
+    {{ block.super }}
+
+    <style>
+        .button-green {
+            background-color: #28a745;  /* Verde */
+            color: white;  /* Texto blanco */
+            border: none;  /* Sin borde */
+            border-radius: 5px;  /* Bordes redondeados */
+            padding: 10px 20px;  /* Espaciado interno */
+            font-size: 16px;  /* Tamaño de fuente */
+            cursor: pointer;  /* Aparece como un puntero */
+            transition: background-color 0.3s ease;  /* Transición suave */
+        }
+
+        .button-green:hover {
+            background-color: #218838;  /* Verde más oscuro al pasar el cursor */
+        }
+
+        .button-green:active {
+            background-color: #1e7e34;  /* Verde aún más oscuro cuando se presiona */
+        }
+    </style>
+
+    <script>
+        document.getElementById("update-time-btn").addEventListener("click", function () {
+            let currentDatetime = new Date().toISOString().slice(0, 19).replace("T", " ");
+            
+            fetch("{% url 'update_time' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ datetime: currentDatetime })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mostrar la hora que devuelve el backend en el mensaje de confirmación
+                    alert("Hora actualizada a: " + data.message);  // Usar el mensaje del backend
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => alert("Error de conexión"));
+        });
+    </script>
+{% endblock %}

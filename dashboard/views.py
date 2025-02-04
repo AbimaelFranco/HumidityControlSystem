@@ -6,6 +6,15 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from django.utils.timezone import now, timedelta, localtime
 from django.core.paginator import Paginator
 from dashboard.models import Records, configuration
+#############################
+import subprocess
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import make_aware
+import datetime
+import pytz
+
 
 
 def dashboard_home(request):
@@ -202,3 +211,33 @@ def export_to_excel(request):
     wb.save(response)
 
     return response
+
+
+@csrf_exempt  # Deshabilitar CSRF para pruebas, asegúrate de manejar la seguridad adecuadamente
+def update_system_time(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            new_time = data.get("datetime")
+
+            if not new_time:
+                return JsonResponse({"error": "No datetime provided"}, status=400)
+
+            # Convertir la hora enviada a UTC (si es necesario)
+            utc_time = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M:%S")
+
+            # Convertir la hora a la zona horaria de Guatemala (CST)
+            guatemala_tz = pytz.timezone('America/Guatemala')
+            aware_time = pytz.utc.localize(utc_time)  # Convertir a hora UTC (aware time)
+            guatemala_time = aware_time.astimezone(guatemala_tz)  # Convertir a la zona horaria de Guatemala
+
+            # Formatear la hora para configurarla en la Raspberry Pi
+            formatted_time = guatemala_time.strftime("%Y-%m-%d %H:%M:%S")
+
+            # Comando para actualizar la hora en la Raspberry Pi
+            subprocess.run(["sudo", "timedatectl", "set-time", formatted_time], check=True)
+
+            return JsonResponse({"success": True, "message": f"Time updated to {guatemala_time.strftime('%Y-%m-%d %H:%M:%S')}"})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
