@@ -17,18 +17,22 @@
 <body>
 
   <div id="app">
-
-    <aside class="aside is-placed-left is-expanded">
+    <aside class="aside">
       <div class="aside-tools">
-        <div>
-          Admin
-          <hr>
-          Temperatura & Humedad
-          {% comment %} <b class="font-black">Temperatura</b> & <b class="font-black">Humedad</b> {% endcomment %}
+        <div class="aside-header">
+          <div class="aside-title">
+            Admin
+            <hr>
+            Temperatura & Humedad
+          </div>
+          {% comment %} <button id="menu-toggle" class="menu-toggle"> {% endcomment %}
+            {% comment %} <i class="mdi mdi-menu"></i> {% endcomment %}
+          {% comment %} </button> {% endcomment %}
         </div>
       </div>
+    
       <div class="menu is-menu-main">
-        <p class="menu-label">General</p>
+        <p class="menu-label">Vistas</p>
         <ul class="menu-list">
           {% if request.path == '/dashboard/'%}
             <li class="active">
@@ -40,9 +44,7 @@
               <span class="menu-item-label">Dashboard</span>
             </a>
           </li>
-        </ul>
-        <p class="menu-label">Datos</p>
-        <ul class="menu-list">
+    
           {% if request.path == '/dashboard/graphs'%}
             <li class="active">
           {% else %}
@@ -53,6 +55,7 @@
               <span class="menu-item-label">Gráficas</span>
             </a>
           </li>
+    
           {% if request.path == '/dashboard/registers'%}
             <li class="active">
           {% else %}
@@ -63,17 +66,17 @@
               <span class="menu-item-label">Registros</span>
             </a>
           </li>
+    
           <li>
             <a href="{% url 'admin:index' %}">
               <span class="icon"><i class="mdi mdi-lock"></i></span>
               <span class="menu-item-label">Configuración</span>
             </a>
           </li>
-
         </ul>
-
       </div>
     </aside>
+    
 
     
 
@@ -130,9 +133,82 @@
 
   </div>
 
+<style>
+  @media (max-width: 768px) {
+    .aside {
+        position: fixed;
+        left: -250px; /* Ocultar la barra */
+        width: 250px;
+        height: 100%;
+        background: #2d2d2d; /* Color de fondo */
+        transition: left 0.3s ease-in-out;
+        z-index: 999;
+    }
+
+    .aside.is-open {
+        left: 0; /* Mostrar la barra */
+    }
+
+    .menu-toggle {
+        display: block;  /* Mostrar el botón */
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: #2d2d2d;
+        color: white;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        z-index: 1000;
+    }
+}
+
+/* Para pantallas grandes, hacer que la barra se pueda ocultar */
+@media (min-width: 769px) {
+    .menu-toggle {
+        display: block; /* Asegurar que el botón se vea en PC */
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #2d2d2d;
+        color: white;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+        z-index: 1000;
+    }
+
+    .aside {
+        width: 250px;
+        transition: margin-left 0.3s ease-in-out;
+    }
+
+    .aside.is-collapsed {
+        margin-left: -250px; /* Ocultar la barra lateral en PC */
+    }
+}
+
+</style>
+    
+
+ 
   <script type="text/javascript" src="{% static 'js/main.min.js?v=1628755089081' %} "></script>
   <script type="text/javascript" src="{% static 'js/chart.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/chart.sample.min.js' %} "></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var menuToggle = document.getElementById("menu-toggle");
+        var sidebar = document.querySelector(".aside");
+    
+        if (menuToggle && sidebar) {
+            menuToggle.addEventListener("click", function() {
+                sidebar.classList.toggle("is-open");
+            });
+        }
+    });
+    </script>
+    
 
   <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.9.95/css/materialdesignicons.min.css">
   {% comment %} <link rel="stylesheet" src="{% static 'bulma/css/bulma.min.css' %}> {% endcomment %}

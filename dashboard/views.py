@@ -53,6 +53,8 @@ def dashboard_home(request):
         humidity_min_alert = float(last_configuration.humidity_min_alert)
         humidity_max_alert = float(last_configuration.humidity_max_alert)
 
+        hora = datetime.datetime.now().strftime("%H:%M")
+
         context = {
         'timestamps': timestamps,
         'humidity1': humidity1,
@@ -68,6 +70,7 @@ def dashboard_home(request):
         'temperature_max_alert':temperature_max_alert,
         'humidity_min_alert':humidity_min_alert,
         'humidity_max_alert':humidity_max_alert,
+        'hora': hora,
     }
     
     except:
@@ -237,7 +240,46 @@ def update_system_time(request):
             # Comando para actualizar la hora en la Raspberry Pi
             subprocess.run(["sudo", "timedatectl", "set-time", formatted_time], check=True)
 
+            ##################################################################
+            ##################################################################
+            # subprocess.run(["cd", "/home/camara/Desktop/proyecto/HumidityControlSystem"], check=True)
+            subprocess.run(["source", "/home/camara/Desktop/proyecto/HumidityControlSystem/env/bin/activate"], check=True)
+            subprocess.run(["python", "/home/camara/Desktop/proyecto/HumidityControlSystem/test/gpio.py"], check=True)
+            ##################################################################
+            ##################################################################
+
             return JsonResponse({"success": True, "message": f"Time updated to {guatemala_time.strftime('%Y-%m-%d %H:%M:%S')}"})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt  # Deshabilitar CSRF para pruebas, asegúrate de manejar la seguridad adecuadamente
+def run_sensors(request):
+    if request.method == "POST":
+        try:
+            # data = json.loads(request.body)
+            # new_time = data.get("datetime")
+
+            # if not new_time:
+            #     return JsonResponse({"error": "No datetime provided"}, status=400)
+
+            # # Convertir la hora enviada a UTC (si es necesario)
+            # utc_time = datetime.datetime.strptime(new_time, "%Y-%m-%d %H:%M:%S")
+
+            # # Convertir la hora a la zona horaria de Guatemala (CST)
+            # guatemala_tz = pytz.timezone('America/Guatemala')
+            # aware_time = pytz.utc.localize(utc_time)  # Convertir a hora UTC (aware time)
+            # guatemala_time = aware_time.astimezone(guatemala_tz)  # Convertir a la zona horaria de Guatemala
+
+            # # Formatear la hora para configurarla en la Raspberry Pi
+            # formatted_time = guatemala_time.strftime("%Y-%m-%d %H:%M:%S")
+
+            # Comando para actualizar la hora en la Raspberry Pi
+            subprocess.run(["cd", "/home/camara/Desktop/proyecto/HumidityControlSystem"], check=True)
+            subprocess.run(["source env/bin/activate"], check=True)
+            subprocess.run(["python test/gpio.py"], check=True)
+
+            return JsonResponse({"success"})
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)

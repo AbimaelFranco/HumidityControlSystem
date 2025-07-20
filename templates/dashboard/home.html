@@ -16,7 +16,7 @@
 <section class="section main-section">
   <!-- Tarjetas Datos -->
   <div class="grid gap-6 grid-cols-1 md:grid-cols-3 mb-6">
-    <div class="card">
+    {% comment %} <div class="card">
       <div class="card-content">
         <div class="flex items-center justify-between">
           <div class="widget-label">
@@ -30,7 +30,29 @@
           <span class="icon widget-icon text-black-500"><i class="mdi mdi-clock mdi-48px"></i></span>
         </div>
       </div>
+    </div> {% endcomment %}
+
+    <div class="card">
+      <div class="card-content">
+        <div class="flex items-center justify-between">
+          <div class="widget-label">
+            <h3>
+              Última Lectura
+            </h3>
+            <h1>
+              {{ last_timestamp }}
+            </h1>
+            <p class="hora-actual" style="font-size: 0.8rem; color: #888; margin-top: 5px;">
+              Hora actual: {{ hora }}
+            </p>
+          </div>
+          <span class="icon widget-icon text-black-500"><i class="mdi mdi-clock mdi-48px"></i></span>
+        </div>
+      </div>
     </div>
+   
+   
+
     <div class="card">
       <div class="card-content">
         <div class="flex items-center justify-between">
@@ -42,6 +64,9 @@
             class="{% if last_avg_temperature < temperature_min_alert or last_avg_temperature > temperature_max_alert %}text-red-500{% else %}text-green-500{% endif %}">
               {{last_avg_temperature|floatformat:2}} °C
             </h1>
+            <p class="temp" style="font-size: 0.8rem; color: #888; margin-top: 5px;">
+              {% if last_avg_temperature < temperature_min_alert or last_avg_temperature > temperature_max_alert %}Temperatura fuera de rango establecido {% else %}Temperatura adecuada{% endif %}
+            </p>
           </div>
           {% if last_avg_temperature < temperature_min_alert or last_avg_temperature > temperature_max_alert %}
           <span class="icon widget-icon text-red-500"><i class="mdi mdi-thermometer mdi-48px"></i></span>
@@ -70,6 +95,11 @@
               {{last_avg_humidity|floatformat:2}} %
             </h1>
             {% endif %}
+
+            <p class="temp" style="font-size: 0.8rem; color: #888; margin-top: 5px;">
+              {% if last_avg_humidity < humidity_min_alert or last_avg_humidity > humidity_max_alert %} Humedad fuera de rango establecido {% else %} Humedad adecuada {% endif %}
+            </p>
+
           </div>
           {% if last_avg_humidity < humidity_min_alert or last_avg_humidity > humidity_max_alert %}
           <span class="icon widget-icon text-red-500"><i class="mdi mdi-water-pump mdi-48px"></i></span>
