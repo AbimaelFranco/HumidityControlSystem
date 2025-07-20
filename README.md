@@ -69,7 +69,10 @@ Esta sección agrupa comandos importantes para la gestión y diagnóstico del si
 ### 🔍 Comandos I2C para sensores
 
 - `sudo i2cdetect -y 1`  
-  Escanea y muestra los dispositivos conectados al bus I2C 1, muy útil para verificar que el sensor de temperatura y humedad está correctamente conectado.
+  Escanea y muestra los dispositivos conectados al bus I2C 1, muy útil para verificar que el sensor de temperatura y humedad está correctamente conectado.  
+  > En este proyecto, los sensores típicamente aparecen en las direcciones **0x38** y **0x39**.  
+  > Si estos valores no aparecen, puede indicar un problema en la conexión o configuración del sensor.
+
 
 ---
 
