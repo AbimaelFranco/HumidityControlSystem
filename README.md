@@ -1,6 +1,16 @@
 # HumidityControlSystem
 Sistema inteligente de monitoreo y control de humedad y temperatura desarrollado para el laboratorio de materiales de construcción del Centro de Investigaciones de la Facultad de Ingeniería, utilizando Raspberry Pi, Python y Django.
 
+## 🧷 Pines utilizados en el proyecto (Raspberry Pi 3)
+
+| Físico | Función         | Uso en el proyecto                      | Físico | Función         | Uso en el proyecto                      |
+|--------|------------------|------------------------------------------|--------|------------------|------------------------------------------|
+| 1      | 3.3V             |                                          | 2      | 5V              | **Alimentación del sensor (+5V)**        |
+| 3      | GPIO2 (SDA)     | **I2C – Línea de datos (SDA)**           | 4      | 5V              | **Alimentación del sensor (+5V)**        |
+| 5      | GPIO3 (SCL)     | **I2C – Línea de reloj (SCL)**           | 6      | GND             | **Tierra (GND)**                         |
+| 36     | GPIO16          | **Salida digital – Activa electroválvula 1** |        |                  |                                          |
+
+
 ## 📚 Comandos útiles y documentación para mantenimiento
 
 Esta sección agrupa comandos importantes para la gestión y diagnóstico del sistema de control, para que quien dé mantenimiento pueda comprender rápidamente su uso y propósito.
